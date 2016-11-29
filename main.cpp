@@ -88,14 +88,25 @@ int main(int argc, char *argv[])
 
 		out vec4 outColor;
 		uniform sampler2D avatar;
+		uniform int time;
 
 		void main()
 		{
 			if (Texture.x == 0.0f && Texture.y == 0.0f) {
 				outColor = vec4(Color, 1.0);
 			}
-			else {
+			else if (Texture.y < 0.5f) {
 				outColor = texture(avatar, Texture);
+			}
+			else {
+				//outColor = texture(tex, vec2(Texture.x, 1.0f - Texture.y));
+				outColor = texture(
+					avatar,
+					vec2(
+						Texture.x + sin(Texture.y * 60.0 + time / 100.0) / 30.0,
+						1.0 - Texture.y
+					)
+				) * vec4(0.7, 0.7, 1.0, 1.0);
 			}
 		}
 	);
@@ -161,6 +172,8 @@ int main(int argc, char *argv[])
 					break;
 			}
 		}
+
+		glUniform1i(glGetUniformLocation(shaderProgram, "time"), SDL_GetTicks());
 
 		// Clear the screen to black
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
