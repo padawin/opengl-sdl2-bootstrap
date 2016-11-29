@@ -22,10 +22,10 @@ int main(int argc, char *argv[])
 	initSDL("OpenGL", 0, 0, 400, 400);
 
 	float vertices[] = {
-		0.5f,  0.5f, // Vertex 1 (X, Y)
-		0.5f, -0.5f, // Vertex 2 (X, Y)
-		-0.5f, -0.5f,  // Vertex 3 (X, Y)
-		-0.5f, 0.5f // Vertex 2 (X, Y)
+		0.5f,  0.5f, 1.0f, 0.0f, 0.0f, // Vertex 1 (X, Y, R, G, B)
+		0.5f, -0.5f, 0.0f, 1.0f, 0.0f, // Vertex 2 (X, Y, R, G, B)
+		-0.5f, -0.5f, 0.0f, 0.0f, 1.0f, // Vertex 3 (X, Y, R, G, B)
+		-0.5f, 0.5f, 1.0f, 1.0f, 0.0f // Vertex 2 (X, Y, R, G, B)
 	};
 
 	GLuint elements[] = {
@@ -54,8 +54,13 @@ int main(int argc, char *argv[])
 	// Create and compile the vertex shader
 	const char* vertexSource = GLSL(
 		in vec2 position;
+		in vec3 color;
 
-		void main() {
+		out vec3 Color;
+
+		void main()
+		{
+			Color = color;
 			gl_Position = vec4(position, 0.0, 1.0);
 		}
 	);
@@ -66,11 +71,13 @@ int main(int argc, char *argv[])
 
 	// Create and compile the fragment shader
 	const char* fragmentSource = GLSL(
-		uniform vec3 triangleColor;
+		in vec3 Color;
+
 		out vec4 outColor;
 
-		void main() {
-			outColor = vec4(triangleColor, 1.0f);
+		void main()
+		{
+			outColor = vec4(Color, 1.0);
 		}
 	);
 
@@ -89,11 +96,13 @@ int main(int argc, char *argv[])
 	// Specify the layout of the vertex data
 	GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
 	glEnableVertexAttribArray(posAttrib);
-	glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 0, 0);
+	glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), 0);
 
-	// manipulate the triangle's color
-	GLint uniColor = glGetUniformLocation(shaderProgram, "triangleColor");
-	glUniform3f(uniColor, 1.0f, 0.0f, 0.0f);
+	GLint colAttrib = glGetAttribLocation(shaderProgram, "color");
+	glEnableVertexAttribArray(colAttrib);
+	glVertexAttribPointer(
+		colAttrib, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(2 * sizeof(float))
+	);
 
 	SDL_Event event;
 	bool running = true;
@@ -105,12 +114,6 @@ int main(int argc, char *argv[])
 					break;
 
 				case SDL_KEYDOWN:
-					if (event.key.keysym.sym == SDLK_UP) {
-						glUniform3f(uniColor, 0.0f, 1.0f, 0.0f);
-					}
-					else if (event.key.keysym.sym == SDLK_DOWN) {
-						glUniform3f(uniColor, 0.0f, 0.0f, 1.0f);
-					}
 					break;
 			}
 		}
