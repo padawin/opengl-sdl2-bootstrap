@@ -22,15 +22,21 @@ int main(int argc, char *argv[])
 	initSDL("OpenGL", 0, 0, 400, 400);
 
 	float vertices[] = {
-		0.5f,  0.5f, 1.0f, 0.0f, 0.0f, // Vertex 1 (X, Y, R, G, B)
-		0.5f, -0.5f, 0.0f, 1.0f, 0.0f, // Vertex 2 (X, Y, R, G, B)
-		-0.5f, -0.5f, 0.0f, 0.0f, 1.0f, // Vertex 3 (X, Y, R, G, B)
-		-0.5f, 0.5f, 1.0f, 1.0f, 0.0f // Vertex 2 (X, Y, R, G, B)
+		// roof
+		0.0f, 0.75f, 1.0f, 0.0f, 0.0f,
+		0.75f, 0.0f, 1.0f, 0.0f, 0.0f,
+		-0.75f, 0.0f, 1.0f, 0.0f, 0.0f,
+		// walls
+		0.5f, 0.0f, 0.0f, 0.0f, 1.0f,
+		-0.5f, -0.75f, 0.0f, 0.0f, 1.0f,
+		0.5f, -0.75f, 0.0f, 0.0f, 1.0f,
+		-0.5f, 0.0f, 0.0f, 0.0f, 1.0f
 	};
 
 	GLuint elements[] = {
 		0, 1, 2,
-		2, 3, 0
+		3, 4, 5,
+		4, 3, 6
 	};
 
 	// create vertex array object
@@ -123,7 +129,7 @@ int main(int argc, char *argv[])
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		// Draw a triangle from the 3 vertices
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
 
 		SDL_GL_SwapWindow(window);
 	}
