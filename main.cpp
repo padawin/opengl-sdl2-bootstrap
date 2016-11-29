@@ -6,6 +6,8 @@
 #define GLEW_STATIC
 #include <GL/glew.h>
 
+#include <SOIL.h>
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
 
@@ -22,15 +24,16 @@ int main(int argc, char *argv[])
 	initSDL("OpenGL", 0, 0, 400, 400);
 
 	float vertices[] = {
+		// Position    Color             Texcoords
 		// roof
-		0.0f, 0.75f, 1.0f, 0.0f, 0.0f,
-		0.75f, 0.0f, 1.0f, 0.0f, 0.0f,
-		-0.75f, 0.0f, 1.0f, 0.0f, 0.0f,
+		0.0f,   0.75f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+		0.75f,  0.0f,  1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+		-0.75f, 0.0f,  1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
 		// walls
-		0.5f, 0.0f, 0.0f, 0.0f, 1.0f,
-		-0.5f, -0.75f, 0.0f, 0.0f, 1.0f,
-		0.5f, -0.75f, 0.0f, 0.0f, 1.0f,
-		-0.5f, 0.0f, 0.0f, 0.0f, 1.0f
+		0.5f,   0.0f,  0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
+		-0.5f, -0.75f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
+		0.5f,  -0.75f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
+		-0.5f,  0.0f,  0.0f, 0.0f, 1.0f, 0.0f, 0.0f
 	};
 
 	GLuint elements[] = {
@@ -61,12 +64,15 @@ int main(int argc, char *argv[])
 	const char* vertexSource = GLSL(
 		in vec2 position;
 		in vec3 color;
+		in vec2 texture;
 
 		out vec3 Color;
+		out vec2 Texture;
 
 		void main()
 		{
 			Color = color;
+			Texture = texture;
 			gl_Position = vec4(position, 0.0, 1.0);
 		}
 	);
@@ -78,12 +84,19 @@ int main(int argc, char *argv[])
 	// Create and compile the fragment shader
 	const char* fragmentSource = GLSL(
 		in vec3 Color;
+		in vec2 Texture;
 
 		out vec4 outColor;
+		uniform sampler2D tex;
 
 		void main()
 		{
-			outColor = vec4(Color, 1.0);
+			if (Texture.x == 0.0f && Texture.y == 0.0f) {
+				outColor = vec4(Color, 1.0);
+			}
+			else {
+				outColor = texture(tex, Texture);
+			}
 		}
 	);
 
@@ -102,13 +115,34 @@ int main(int argc, char *argv[])
 	// Specify the layout of the vertex data
 	GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
 	glEnableVertexAttribArray(posAttrib);
-	glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), 0);
+	glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(float), 0);
 
 	GLint colAttrib = glGetAttribLocation(shaderProgram, "color");
 	glEnableVertexAttribArray(colAttrib);
 	glVertexAttribPointer(
-		colAttrib, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(2 * sizeof(float))
+		colAttrib, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)(2 * sizeof(float))
 	);
+
+	GLint texAttrib = glGetAttribLocation(shaderProgram, "texture");
+	glEnableVertexAttribArray(texAttrib);
+	glVertexAttribPointer(
+		texAttrib, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)(5 * sizeof(float))
+	);
+
+	// textures
+	GLuint tex;
+	glGenTextures(1, &tex);
+	glBindTexture(GL_TEXTURE_2D, tex);
+
+	int width, height;
+	unsigned char* image = SOIL_load_image("avatar.png", &width, &height, 0, SOIL_LOAD_RGB);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+	SOIL_free_image_data(image);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glGenerateMipmap(GL_TEXTURE_2D);
 
 	SDL_Event event;
 	bool running = true;
