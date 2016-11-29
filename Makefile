@@ -3,7 +3,7 @@ TARGET := $(NAME)
 DISTFILES := $(TARGET) ClearSans-Medium.ttf resources
 OBJS := *.cpp
 OPTS := -g -O2 -Wall
-LIB := -lSDL2
+LIB := -lSDL2 -lGLEW -framework OpenGL
 CC := $(CROSS_COMPILE)g++
 
 SDL2CONF = $(shell which sdl2-config)

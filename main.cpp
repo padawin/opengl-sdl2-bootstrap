@@ -3,6 +3,7 @@
 #include <stdlib.h>
 
 // Include GLEW
+#define GLEW_STATIC
 #include <GL/glew.h>
 
 #include <SDL2/SDL.h>
@@ -18,6 +19,10 @@ int main(int argc, char *argv[])
 {
 	initSDL("OpenGL", 0, 0, 100, 100);
 
+	GLuint vertexBuffer;
+	glGenBuffers(1, &vertexBuffer);
+
+	printf("%u\n", vertexBuffer);
 	SDL_Event windowEvent;
 	while (true) {
 		if (SDL_PollEvent(&windowEvent)) {
@@ -54,6 +59,8 @@ int initSDL(const char* title, const int x, const int y, const int w, const int 
 		}
 		else {
 			context = SDL_GL_CreateContext(window);
+			glewExperimental = GL_TRUE;
+			glewInit();
 		}
 	}
 
