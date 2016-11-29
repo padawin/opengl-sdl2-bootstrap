@@ -87,7 +87,7 @@ int main(int argc, char *argv[])
 		in vec2 Texture;
 
 		out vec4 outColor;
-		uniform sampler2D tex;
+		uniform sampler2D avatar;
 
 		void main()
 		{
@@ -95,7 +95,7 @@ int main(int argc, char *argv[])
 				outColor = vec4(Color, 1.0);
 			}
 			else {
-				outColor = texture(tex, Texture);
+				outColor = texture(avatar, Texture);
 			}
 		}
 	);
@@ -135,14 +135,18 @@ int main(int argc, char *argv[])
 	glBindTexture(GL_TEXTURE_2D, tex);
 
 	int width, height;
-	unsigned char* image = SOIL_load_image("avatar.png", &width, &height, 0, SOIL_LOAD_RGB);
+	unsigned char* image;
+	glActiveTexture(GL_TEXTURE0);
+	image = SOIL_load_image("avatar.png", &width, &height, 0, SOIL_LOAD_RGB);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
 	SOIL_free_image_data(image);
+	glUniform1i(glGetUniformLocation(shaderProgram, "avatar"), 0);
+	glGenerateMipmap(GL_TEXTURE_2D);
+
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glGenerateMipmap(GL_TEXTURE_2D);
 
 	SDL_Event event;
 	bool running = true;
