@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
 	float vertices[] = {
 		// Position    Color             Texcoords
 		// roof
-		0.0f,   0.0f, 0.75f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+		0.0f,   0.3f, -0.75f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
 		0.75f,  0.0f,  0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
 		-0.75f, 0.0f,  0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
 		// walls
