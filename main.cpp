@@ -60,6 +60,7 @@ int main(int argc, char *argv[])
 	// copy the vertices in the buffer
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
+	// copy the elements in the buffer
 	GLuint elementsBuffer;
 	glGenBuffers(1, &elementsBuffer);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementsBuffer);
@@ -108,6 +109,7 @@ int main(int argc, char *argv[])
 				outColor = texture(avatar, Texture);
 			}
 			else {
+				// this inverts the bottom half of the texture
 				//outColor = texture(tex, vec2(Texture.x, 1.0f - Texture.y));
 				outColor = texture(
 					avatar,
