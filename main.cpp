@@ -26,7 +26,7 @@ void cleanSDL();
 
 int main(int argc, char *argv[])
 {
-	initSDL("OpenGL", 0, 0, 400, 400);
+	initSDL("OpenGL", 0, 0, 800, 600);
 
 	float vertices[] = {
 		// Position    Color             Texcoords
