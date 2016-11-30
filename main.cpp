@@ -197,9 +197,9 @@ int main(int argc, char *argv[])
 
 		// camera definition
 		glm::mat4 view = glm::lookAt(
-			glm::vec3(1.2f, 1.2f, 1.2f),
+			glm::vec3(1.0f, 0.0f, 2.0f),
 			glm::vec3(0.0f, 0.0f, 0.0f),
-			glm::vec3(0.0f, 0.0f, 1.0f)
+			glm::vec3(0.0f, 1.0f, 0.0f)
 		);
 		GLint uniView = glGetUniformLocation(shaderProgram, "view");
 		glUniformMatrix4fv(uniView, 1, GL_FALSE, glm::value_ptr(view));
