@@ -137,7 +137,7 @@ int main(int argc, char *argv[])
 	GLint texAttrib = glGetAttribLocation(shaderProgram, "texture");
 	glEnableVertexAttribArray(texAttrib);
 	glVertexAttribPointer(
-		texAttrib, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)(5 * sizeof(float))
+		texAttrib, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)(5 * sizeof(float))
 	);
 
 	// textures
