@@ -31,14 +31,14 @@ int main(int argc, char *argv[])
 	float vertices[] = {
 		// Position    Color             Texcoords
 		// roof
-		0.0f,   0.75f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-		0.75f,  0.0f,  1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-		-0.75f, 0.0f,  1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+		0.0f,   0.0f, 0.75f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+		0.75f,  0.0f,  0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+		-0.75f, 0.0f,  0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
 		// walls
-		0.5f,   0.0f,  0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
-		-0.5f, -0.75f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
-		0.5f,  -0.75f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
-		-0.5f,  0.0f,  0.0f, 0.0f, 1.0f, 0.0f, 0.0f
+		0.5f,   0.0f,  0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
+		-0.5f, -0.75f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
+		0.5f,  -0.75f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
+		-0.5f,  0.0f,  0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f
 	};
 
 	GLuint elements[] = {
@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
 
 	// Create and compile the vertex shader
 	const char* vertexSource = GLSL(
-		in vec2 position;
+		in vec3 position;
 		in vec3 color;
 		in vec2 texture;
 
@@ -82,7 +82,7 @@ int main(int argc, char *argv[])
 		{
 			Color = color;
 			Texture = texture;
-			gl_Position = proj * view * trans * vec4(position, 0.0, 1.0);
+			gl_Position = proj * view * trans * vec4(position, 1.0);
 		}
 	);
 
@@ -135,18 +135,18 @@ int main(int argc, char *argv[])
 	// Specify the layout of the vertex data
 	GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
 	glEnableVertexAttribArray(posAttrib);
-	glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(float), 0);
+	glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), 0);
 
 	GLint colAttrib = glGetAttribLocation(shaderProgram, "color");
 	glEnableVertexAttribArray(colAttrib);
 	glVertexAttribPointer(
-		colAttrib, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)(2 * sizeof(float))
+		colAttrib, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float))
 	);
 
 	GLint texAttrib = glGetAttribLocation(shaderProgram, "texture");
 	glEnableVertexAttribArray(texAttrib);
 	glVertexAttribPointer(
-		texAttrib, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)(5 * sizeof(float))
+		texAttrib, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float))
 	);
 
 	// textures
