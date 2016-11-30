@@ -11,6 +11,11 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
 
+// for math transformations
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 #define GLSL(src) "#version 150 core\n" #src
 
 SDL_Window* window;
@@ -69,11 +74,15 @@ int main(int argc, char *argv[])
 		out vec3 Color;
 		out vec2 Texture;
 
+		uniform mat4 trans;
+		uniform mat4 view;
+		uniform mat4 proj;
+
 		void main()
 		{
 			Color = color;
 			Texture = texture;
-			gl_Position = vec4(position, 0.0, 1.0);
+			gl_Position = proj * view * trans * vec4(position, 0.0, 1.0);
 		}
 	);
 
@@ -159,6 +168,8 @@ int main(int argc, char *argv[])
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+	glm::mat4 trans;
+
 	SDL_Event event;
 	bool running = true;
 	while (running) {
@@ -173,7 +184,30 @@ int main(int argc, char *argv[])
 			}
 		}
 
+		trans = glm::rotate(
+			trans,
+			glm::radians(3.0f),
+			glm::vec3(1.0f, 1.0f, 0.0f)
+		);
+		GLint uniTrans = glGetUniformLocation(shaderProgram, "trans");
+		glUniformMatrix4fv(uniTrans, 1, GL_FALSE, glm::value_ptr(trans));
 		glUniform1i(glGetUniformLocation(shaderProgram, "time"), SDL_GetTicks());
+
+		// camera definition
+		glm::mat4 view = glm::lookAt(
+			glm::vec3(1.2f, 1.2f, 1.2f),
+			glm::vec3(0.0f, 0.0f, 0.0f),
+			glm::vec3(0.0f, 0.0f, 1.0f)
+		);
+		GLint uniView = glGetUniformLocation(shaderProgram, "view");
+		glUniformMatrix4fv(uniView, 1, GL_FALSE, glm::value_ptr(view));
+		// end of camera
+
+		// Field of view
+		glm::mat4 proj = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 1.0f, 10.0f);
+		GLint uniProj = glGetUniformLocation(shaderProgram, "proj");
+		glUniformMatrix4fv(uniProj, 1, GL_FALSE, glm::value_ptr(proj));
+		// end field of view
 
 		// Clear the screen to black
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
