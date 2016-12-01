@@ -262,7 +262,7 @@ void update(GLuint shaderProgram) {
 	glm::mat4 trans;
 	trans = glm::rotate(
 		trans,
-		glm::radians(3.0f),
+		glm::radians((float) (3 * (SDL_GetTicks() / 50) % 360)),
 		glm::vec3(1.0f, 1.0f, 0.0f)
 	);
 	GLint uniTrans = glGetUniformLocation(shaderProgram, "trans");
