@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
 	};
 
 	GLuint elements[] = {
-		0, 1, 2,
+		0, 2, 1,
 		3, 4, 5,
 		4, 3, 6
 	};
@@ -220,6 +220,9 @@ void initGL() {
 	glewExperimental = GL_TRUE;
 	glewInit();
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE); // cull face
+	glCullFace(GL_BACK); // cull back face
+	glFrontFace(GL_CCW); // GL_CCW for counter clock-wise
 }
 
 void mainLoop(GLuint shaderProgram) {
