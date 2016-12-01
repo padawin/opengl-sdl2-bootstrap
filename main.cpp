@@ -22,11 +22,19 @@ SDL_Window* window;
 SDL_GLContext context;
 
 int initSDL(const char* title, const int x, const int y, const int w, const int h);
+void initGL();
+void mainLoop(GLuint shaderProgram);
+bool handleEvents();
+void update(GLuint shaderProgram);
+void setCamera(GLuint shaderProgram);
+void setFieldOfView(GLuint shaderProgram);
+void render();
 void cleanSDL();
 
 int main(int argc, char *argv[])
 {
 	initSDL("OpenGL", 0, 0, 800, 600);
+	initGL();
 
 	float vertices[] = {
 		// Position    Color             Texcoords
@@ -170,56 +178,7 @@ int main(int argc, char *argv[])
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	glm::mat4 trans;
-
-	SDL_Event event;
-	bool running = true;
-	while (running) {
-		while (SDL_PollEvent(&event)) {
-			switch (event.type) {
-				case SDL_QUIT:
-					running = false;
-					break;
-
-				case SDL_KEYDOWN:
-					break;
-			}
-		}
-
-		trans = glm::rotate(
-			trans,
-			glm::radians(3.0f),
-			glm::vec3(1.0f, 1.0f, 0.0f)
-		);
-		GLint uniTrans = glGetUniformLocation(shaderProgram, "trans");
-		glUniformMatrix4fv(uniTrans, 1, GL_FALSE, glm::value_ptr(trans));
-		glUniform1i(glGetUniformLocation(shaderProgram, "time"), SDL_GetTicks());
-
-		// camera definition
-		glm::mat4 view = glm::lookAt(
-			glm::vec3(1.0f, 0.0f, 2.0f),
-			glm::vec3(0.0f, 0.0f, 0.0f),
-			glm::vec3(0.0f, 1.0f, 0.0f)
-		);
-		GLint uniView = glGetUniformLocation(shaderProgram, "view");
-		glUniformMatrix4fv(uniView, 1, GL_FALSE, glm::value_ptr(view));
-		// end of camera
-
-		// Field of view
-		glm::mat4 proj = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 1.0f, 10.0f);
-		GLint uniProj = glGetUniformLocation(shaderProgram, "proj");
-		glUniformMatrix4fv(uniProj, 1, GL_FALSE, glm::value_ptr(proj));
-		// end field of view
-
-		// Clear the screen to black
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		// Draw a triangle from the 3 vertices
-		glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
-
-		SDL_GL_SwapWindow(window);
-	}
+	mainLoop(shaderProgram);
 
 	glDeleteProgram(shaderProgram);
 	glDeleteShader(fragmentShader);
@@ -251,13 +210,94 @@ int initSDL(const char* title, const int x, const int y, const int w, const int 
 		}
 		else {
 			context = SDL_GL_CreateContext(window);
-			glewExperimental = GL_TRUE;
-			glewInit();
-			glEnable(GL_DEPTH_TEST);
 		}
 	}
 
 	return l_bReturn;
+}
+
+void initGL() {
+	glewExperimental = GL_TRUE;
+	glewInit();
+	glEnable(GL_DEPTH_TEST);
+}
+
+void mainLoop(GLuint shaderProgram) {
+	bool running = true;
+	while (running) {
+		running = handleEvents();
+
+		update(shaderProgram);
+
+		setCamera(shaderProgram);
+		setFieldOfView(shaderProgram);
+
+		render();
+	}
+}
+
+bool handleEvents() {
+	SDL_Event event;
+	bool running = true;
+
+	while (SDL_PollEvent(&event)) {
+		switch (event.type) {
+			case SDL_QUIT:
+				running = false;
+				break;
+
+			case SDL_KEYDOWN:
+				break;
+		}
+	}
+
+	return running;
+}
+
+void update(GLuint shaderProgram) {
+	// will have to be done per object
+	glm::mat4 trans;
+	trans = glm::rotate(
+		trans,
+		glm::radians(3.0f),
+		glm::vec3(1.0f, 1.0f, 0.0f)
+	);
+	GLint uniTrans = glGetUniformLocation(shaderProgram, "trans");
+	glUniformMatrix4fv(uniTrans, 1, GL_FALSE, glm::value_ptr(trans));
+	glUniform1i(glGetUniformLocation(shaderProgram, "time"), SDL_GetTicks());
+}
+
+// Needs to provide player's information
+void setCamera(GLuint shaderProgram) {
+	glm::mat4 view = glm::lookAt(
+		// camera's position
+		glm::vec3(1.0f, 0.0f, 2.0f),
+		// point where the camera is aiming at (eg player's position)
+		glm::vec3(0.0f, 0.0f, 0.0f),
+		// "up" vector of the camera, for its orientation, based on player's
+		// orientation
+		glm::vec3(0.0f, 1.0f, 0.0f)
+	);
+	GLint uniView = glGetUniformLocation(shaderProgram, "view");
+	glUniformMatrix4fv(uniView, 1, GL_FALSE, glm::value_ptr(view));
+}
+
+// based on player's speed?
+void setFieldOfView(GLuint shaderProgram) {
+	glm::mat4 proj = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 1.0f, 10.0f);
+	GLint uniProj = glGetUniformLocation(shaderProgram, "proj");
+	glUniformMatrix4fv(uniProj, 1, GL_FALSE, glm::value_ptr(proj));
+}
+
+void render() {
+	// Clear the screen to black
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	// Draw a triangle from the 3 vertices
+	glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
+
+	SDL_GL_SwapWindow(window);
 }
 
 void cleanSDL() {
