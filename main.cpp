@@ -346,7 +346,7 @@ void render() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Draw a triangle from the 3 vertices
-	glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 
 	SDL_GL_SwapWindow(window);
 }
