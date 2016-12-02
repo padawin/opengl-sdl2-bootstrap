@@ -36,7 +36,12 @@ int main(int argc, char *argv[])
 	initSDL("OpenGL", 0, 0, 800, 600);
 	initGL();
 
-	float vertices[] = {
+	int nbOjectTypes = 1;
+	int objectsVerticesCount[nbOjectTypes];
+	int objectsElementsCount[nbOjectTypes];
+
+	float *vertices[nbOjectTypes];
+	float obj1Vertices[] = {
 		// Position    Color             Texcoords
 		// roof
 		0.0f,   0.3f, -0.75f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
@@ -48,12 +53,17 @@ int main(int argc, char *argv[])
 		0.5f,  -0.75f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
 		-0.5f,  0.0f,  0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f
 	};
+	objectsVerticesCount[0] = sizeof(obj1Vertices);
+	vertices[0] = obj1Vertices;
 
-	GLuint elements[] = {
+	GLuint *elements[nbOjectTypes];
+	GLuint obj1Elements[] = {
 		0, 2, 1,
 		3, 4, 5,
 		4, 3, 6
 	};
+	objectsElementsCount[0] = sizeof(obj1Elements);
+	elements[0] = obj1Elements;
 
 	// create vertex array object
 	GLuint vertexArray;
@@ -61,18 +71,17 @@ int main(int argc, char *argv[])
 	glBindVertexArray(vertexArray);
 
 	// create vertex buffer object
+	// copy the vertices in the buffer
 	GLuint vertexBuffer;
 	glGenBuffers(1, &vertexBuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-
-	// copy the vertices in the buffer
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, objectsVerticesCount[0], vertices[0], GL_STATIC_DRAW);
 
 	// copy the elements in the buffer
 	GLuint elementsBuffer;
 	glGenBuffers(1, &elementsBuffer);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementsBuffer);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, objectsElementsCount[0], elements[0], GL_STATIC_DRAW);
 
 	// Create and compile the vertex shader
 	const char* vertexSource = GLSL(
