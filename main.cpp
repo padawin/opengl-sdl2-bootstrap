@@ -65,23 +65,25 @@ int main(int argc, char *argv[])
 	objectsElementsCount[0] = sizeof(obj1Elements);
 	elements[0] = obj1Elements;
 
-	// create vertex array object
-	GLuint vertexArray;
-	glGenVertexArrays(1, &vertexArray);
-	glBindVertexArray(vertexArray);
+	GLuint vertexArray[nbOjectTypes],
+		vertexBuffer[nbOjectTypes],
+		elementsBuffer[nbOjectTypes];
+	for (int i = 0; i < nbOjectTypes; ++i) {
+		// create vertex array object
+		glGenVertexArrays(1, &vertexArray[i]);
+		glBindVertexArray(vertexArray[i]);
 
-	// create vertex buffer object
-	// copy the vertices in the buffer
-	GLuint vertexBuffer;
-	glGenBuffers(1, &vertexBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-	glBufferData(GL_ARRAY_BUFFER, objectsVerticesCount[0], vertices[0], GL_STATIC_DRAW);
+		// create vertex buffer object
+		// copy the vertices in the buffer
+		glGenBuffers(1, &vertexBuffer[i]);
+		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer[i]);
+		glBufferData(GL_ARRAY_BUFFER, objectsVerticesCount[i], vertices[i], GL_STATIC_DRAW);
 
-	// copy the elements in the buffer
-	GLuint elementsBuffer;
-	glGenBuffers(1, &elementsBuffer);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementsBuffer);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, objectsElementsCount[0], elements[0], GL_STATIC_DRAW);
+		// copy the elements in the buffer
+		glGenBuffers(1, &elementsBuffer[i]);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementsBuffer[i]);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, objectsElementsCount[i], elements[i], GL_STATIC_DRAW);
+	}
 
 	// Create and compile the vertex shader
 	const char* vertexSource = GLSL(
@@ -192,8 +194,11 @@ int main(int argc, char *argv[])
 	glDeleteProgram(shaderProgram);
 	glDeleteShader(fragmentShader);
 	glDeleteShader(vertexShader);
-	glDeleteBuffers(1, &vertexBuffer);
-	glDeleteVertexArrays(1, &vertexArray);
+	for (int i = 0; i < nbOjectTypes; ++i) {
+		glDeleteBuffers(1, &vertexBuffer[i]);
+		glDeleteBuffers(1, &elementsBuffer[i]);
+		glDeleteVertexArrays(1, &vertexArray[i]);
+	}
 	cleanSDL();
 	return 0;
 }
