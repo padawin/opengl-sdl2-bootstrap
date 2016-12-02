@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
 	initSDL("OpenGL", 0, 0, 800, 600);
 	initGL();
 
-	int nbOjectTypes = 1;
+	int nbOjectTypes = 2;
 	int objectsVerticesCount[nbOjectTypes];
 	int objectsElementsCount[nbOjectTypes];
 
@@ -53,8 +53,20 @@ int main(int argc, char *argv[])
 		0.5f,  -0.75f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
 		-0.5f,  0.0f,  0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f
 	};
+	float obj2Vertices[] = {
+		0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+		1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+		1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+		1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+		1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f
+	};
 	objectsVerticesCount[0] = sizeof(obj1Vertices);
+	objectsVerticesCount[1] = sizeof(obj2Vertices);
 	vertices[0] = obj1Vertices;
+	vertices[1] = obj2Vertices;
 
 	GLuint *elements[nbOjectTypes];
 	GLuint obj1Elements[] = {
@@ -62,8 +74,30 @@ int main(int argc, char *argv[])
 		3, 4, 5,
 		4, 3, 6
 	};
+	GLuint obj2Elements[] = {
+		// back
+		0, 2, 1,
+		0, 3, 2,
+		// front
+		4, 5, 6,
+		4, 6, 7,
+		// top
+		7, 6, 2,
+		7, 2, 3,
+		// bottom
+		4, 1, 5,
+		4, 0, 1,
+		// left
+		4, 3, 0,
+		4, 7, 3,
+		// right
+		5, 1, 2,
+		5, 2, 6
+	};
 	objectsElementsCount[0] = sizeof(obj1Elements);
+	objectsElementsCount[1] = sizeof(obj2Elements);
 	elements[0] = obj1Elements;
+	elements[1] = obj2Elements;
 
 	GLuint vertexArray[nbOjectTypes],
 		vertexBuffer[nbOjectTypes],
