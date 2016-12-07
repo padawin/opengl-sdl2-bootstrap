@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
 	int objectsElementsCount[nbOjectTypes];
 
 	float *vertices[nbOjectTypes];
-	float obj1Vertices[] = {
+	GLfloat obj1Vertices[] = {
 		// Position    Color             Texcoords
 		// roof
 		0.0f,   0.3f, -0.75f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
 		0.5f,  -0.75f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
 		-0.5f,  0.0f,  0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f
 	};
-	float obj2Vertices[] = {
+	GLfloat obj2Vertices[] = {
 		0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
 		1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
 		1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
