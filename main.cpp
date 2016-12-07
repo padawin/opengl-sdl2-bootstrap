@@ -23,6 +23,7 @@ SDL_GLContext context;
 
 int initSDL(const char* title, const int x, const int y, const int w, const int h);
 void initGL();
+void createShaders();
 void mainLoop(GLuint shaderProgram);
 bool handleEvents();
 void update(GLuint shaderProgram);
@@ -118,74 +119,7 @@ int main(int argc, char *argv[])
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementsBuffer[i]);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, objectsElementsCount[i], elements[i], GL_STATIC_DRAW);
 	}
-
-	// Create and compile the vertex shader
-	const char* vertexSource = GLSL(
-		in vec3 position;
-		in vec3 color;
-		in vec2 texture;
-
-		out vec3 Color;
-		out vec2 Texture;
-
-		uniform mat4 trans;
-		uniform mat4 view;
-		uniform mat4 proj;
-
-		void main()
-		{
-			Color = color;
-			Texture = texture;
-			gl_Position = proj * view * trans * vec4(position, 1.0);
-		}
-	);
-
-	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShader, 1, &vertexSource, NULL);
-	glCompileShader(vertexShader);
-
-	// Create and compile the fragment shader
-	const char* fragmentSource = GLSL(
-		in vec3 Color;
-		in vec2 Texture;
-
-		out vec4 outColor;
-		uniform sampler2D avatar;
-		uniform int time;
-
-		void main()
-		{
-			if (Texture.x == 0.0f && Texture.y == 0.0f) {
-				outColor = vec4(Color, 1.0);
-			}
-			else if (Texture.y < 0.5f) {
-				outColor = texture(avatar, Texture);
-			}
-			else {
-				// this inverts the bottom half of the texture
-				//outColor = texture(tex, vec2(Texture.x, 1.0f - Texture.y));
-				outColor = texture(
-					avatar,
-					vec2(
-						Texture.x + sin(Texture.y * 60.0 + time / 100.0) / 30.0,
-						1.0 - Texture.y
-					)
-				) * vec4(0.7, 0.7, 1.0, 1.0);
-			}
-		}
-	);
-
-	GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShader, 1, &fragmentSource, NULL);
-	glCompileShader(fragmentShader);
-
-	// link the shaders in a program to be used
-	GLuint shaderProgram = glCreateProgram();
-	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragmentShader);
-	glBindFragDataLocation(shaderProgram, 0, "outColor");
-	glLinkProgram(shaderProgram);
-	glUseProgram(shaderProgram);
+	createShaders();
 
 	// Specify the layout of the vertex data
 	GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
@@ -271,6 +205,76 @@ void initGL() {
 	glEnable(GL_CULL_FACE); // cull face
 	glCullFace(GL_BACK); // cull back face
 	glFrontFace(GL_CCW); // GL_CCW for counter clock-wise
+}
+
+void createShaders() {
+	// Create and compile the vertex shader
+	const char* vertexSource = GLSL(
+		in vec3 position;
+		in vec3 color;
+		in vec2 texture;
+
+		out vec3 Color;
+		out vec2 Texture;
+
+		uniform mat4 trans;
+		uniform mat4 view;
+		uniform mat4 proj;
+
+		void main()
+		{
+			Color = color;
+			Texture = texture;
+			gl_Position = proj * view * trans * vec4(position, 1.0);
+		}
+	);
+
+	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(vertexShader, 1, &vertexSource, NULL);
+	glCompileShader(vertexShader);
+
+	// Create and compile the fragment shader
+	const char* fragmentSource = GLSL(
+		in vec3 Color;
+		in vec2 Texture;
+
+		out vec4 outColor;
+		uniform sampler2D avatar;
+		uniform int time;
+
+		void main()
+		{
+			if (Texture.x == 0.0f && Texture.y == 0.0f) {
+				outColor = vec4(Color, 1.0);
+			}
+			else if (Texture.y < 0.5f) {
+				outColor = texture(avatar, Texture);
+			}
+			else {
+				// this inverts the bottom half of the texture
+				//outColor = texture(tex, vec2(Texture.x, 1.0f - Texture.y));
+				outColor = texture(
+					avatar,
+					vec2(
+						Texture.x + sin(Texture.y * 60.0 + time / 100.0) / 30.0,
+						1.0 - Texture.y
+					)
+				) * vec4(0.7, 0.7, 1.0, 1.0);
+			}
+		}
+	);
+
+	GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(fragmentShader, 1, &fragmentSource, NULL);
+	glCompileShader(fragmentShader);
+
+	// link the shaders in a program to be used
+	GLuint shaderProgram = glCreateProgram();
+	glAttachShader(shaderProgram, vertexShader);
+	glAttachShader(shaderProgram, fragmentShader);
+	glBindFragDataLocation(shaderProgram, 0, "outColor");
+	glLinkProgram(shaderProgram);
+	glUseProgram(shaderProgram);
 }
 
 void mainLoop(GLuint shaderProgram) {
