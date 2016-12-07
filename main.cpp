@@ -40,6 +40,7 @@ int main(int argc, char *argv[])
 {
 	initSDL("OpenGL", 0, 0, 800, 600);
 	initGL();
+	createShaders();
 
 	int nbOjectTypes = 2;
 	int objectsVerticesCount[nbOjectTypes];
@@ -123,7 +124,6 @@ int main(int argc, char *argv[])
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementsBuffer[i]);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, objectsElementsCount[i], elements[i], GL_STATIC_DRAW);
 	}
-	createShaders();
 
 	// Specify the layout of the vertex data
 	GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
