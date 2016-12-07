@@ -20,6 +20,9 @@
 
 SDL_Window* window;
 SDL_GLContext context;
+GLuint vertexShader;
+GLuint fragmentShader;
+GLuint shaderProgram;
 
 int initSDL(const char* title, const int x, const int y, const int w, const int h);
 void initGL();
@@ -229,7 +232,7 @@ void createShaders() {
 		}
 	);
 
-	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+	vertexShader = glCreateShader(GL_VERTEX_SHADER);
 	glShaderSource(vertexShader, 1, &vertexSource, NULL);
 	glCompileShader(vertexShader);
 
@@ -264,12 +267,12 @@ void createShaders() {
 		}
 	);
 
-	GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(fragmentShader, 1, &fragmentSource, NULL);
 	glCompileShader(fragmentShader);
 
 	// link the shaders in a program to be used
-	GLuint shaderProgram = glCreateProgram();
+	shaderProgram = glCreateProgram();
 	glAttachShader(shaderProgram, vertexShader);
 	glAttachShader(shaderProgram, fragmentShader);
 	glBindFragDataLocation(shaderProgram, 0, "outColor");
