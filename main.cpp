@@ -20,6 +20,9 @@
 
 SDL_Window* window;
 SDL_GLContext context;
+GLuint vertexBufferId;
+GLuint elementsBufferId;
+GLuint shipVertexArrayId;
 GLuint vertexShader;
 GLuint fragmentShader;
 GLuint shaderProgram;
@@ -42,11 +45,6 @@ int main(int argc, char *argv[])
 	initGL();
 	createShaders();
 
-	int nbOjectTypes = 2;
-	int objectsVerticesCount[nbOjectTypes];
-	int objectsElementsCount[nbOjectTypes];
-
-	float *vertices[nbOjectTypes];
 	GLfloat obj1Vertices[] = {
 		// Position    Color             Texcoords
 		// roof
@@ -69,12 +67,7 @@ int main(int argc, char *argv[])
 		1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f
 	};
-	objectsVerticesCount[0] = sizeof(obj1Vertices);
-	objectsVerticesCount[1] = sizeof(obj2Vertices);
-	vertices[0] = obj1Vertices;
-	vertices[1] = obj2Vertices;
 
-	GLuint *elements[nbOjectTypes];
 	GLuint obj1Elements[] = {
 		0, 2, 1,
 		3, 4, 5,
@@ -100,58 +93,56 @@ int main(int argc, char *argv[])
 		5, 1, 2,
 		5, 2, 6
 	};
-	objectsElementsCount[0] = sizeof(obj1Elements);
-	objectsElementsCount[1] = sizeof(obj2Elements);
-	elements[0] = obj1Elements;
-	elements[1] = obj2Elements;
 
-	GLuint vertexArray[nbOjectTypes],
-		vertexBuffer[nbOjectTypes],
-		elementsBuffer[nbOjectTypes];
-	for (int i = 0; i < nbOjectTypes; ++i) {
-		// create vertex array object
-		glGenVertexArrays(1, &vertexArray[i]);
-		glBindVertexArray(vertexArray[i]);
+	unsigned long sizeObj1Vertices = sizeof(obj1Vertices);
+	unsigned long sizeObj1Elements = sizeof(obj1Elements);
+	unsigned long sizeFloat = sizeof(GLfloat);
 
-		// create vertex buffer object
-		// copy the vertices in the buffer
-		glGenBuffers(1, &vertexBuffer[i]);
-		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer[i]);
-		glBufferData(GL_ARRAY_BUFFER, objectsVerticesCount[i], vertices[i], GL_STATIC_DRAW);
+	glGenBuffers(1, &vertexBufferId);
+	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferId);
+	glBufferData(
+		GL_ARRAY_BUFFER,
+		sizeObj1Vertices,
+		0,
+		GL_STATIC_DRAW
+	);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeObj1Vertices, obj1Vertices);
 
-		// copy the elements in the buffer
-		glGenBuffers(1, &elementsBuffer[i]);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementsBuffer[i]);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, objectsElementsCount[i], elements[i], GL_STATIC_DRAW);
-	}
+	glGenBuffers(1, &elementsBufferId);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementsBufferId);
+	glBufferData(
+		GL_ELEMENT_ARRAY_BUFFER,
+		sizeObj1Elements,
+		0,
+		GL_STATIC_DRAW
+	);
+	glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, sizeObj1Elements, obj1Elements);
 
-	// Specify the layout of the vertex data
+	glGenVertexArrays(1, &shipVertexArrayId);
+
 	GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
-	glEnableVertexAttribArray(posAttrib);
-	glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), 0);
-
 	GLint colAttrib = glGetAttribLocation(shaderProgram, "color");
-	glEnableVertexAttribArray(colAttrib);
-	glVertexAttribPointer(
-		colAttrib, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float))
-	);
-
 	GLint texAttrib = glGetAttribLocation(shaderProgram, "texture");
+
+	glBindVertexArray(shipVertexArrayId);
+	glEnableVertexAttribArray(posAttrib);
+	glEnableVertexAttribArray(colAttrib);
 	glEnableVertexAttribArray(texAttrib);
-	glVertexAttribPointer(
-		texAttrib, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float))
-	);
+	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferId);
+	glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, 8 * sizeFloat, 0);
+	glVertexAttribPointer(colAttrib, 3, GL_FLOAT, GL_FALSE, 8 * sizeFloat, (void*)(3 * sizeFloat));
+	glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 8 * sizeFloat, (void*)(6 * sizeFloat));
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementsBufferId);
+
 	createTextures();
 	mainLoop(shaderProgram);
 
 	glDeleteProgram(shaderProgram);
 	glDeleteShader(fragmentShader);
 	glDeleteShader(vertexShader);
-	for (int i = 0; i < nbOjectTypes; ++i) {
-		glDeleteBuffers(1, &vertexBuffer[i]);
-		glDeleteBuffers(1, &elementsBuffer[i]);
-		glDeleteVertexArrays(1, &vertexArray[i]);
-	}
+	glDeleteBuffers(1, &vertexBufferId);
+	glDeleteBuffers(1, &elementsBufferId);
+	glDeleteVertexArrays(1, &shipVertexArrayId);
 	cleanSDL();
 	return 0;
 }
@@ -355,8 +346,9 @@ void render() {
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	// Draw a triangle from the 3 vertices
-	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+	glBindVertexArray(shipVertexArrayId);
+	glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
+
 
 	SDL_GL_SwapWindow(window);
 }
