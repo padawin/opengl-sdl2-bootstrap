@@ -27,6 +27,7 @@ GLuint shaderProgram;
 int initSDL(const char* title, const int x, const int y, const int w, const int h);
 void initGL();
 void createShaders();
+void createTextures();
 void mainLoop(GLuint shaderProgram);
 bool handleEvents();
 void update(GLuint shaderProgram);
@@ -140,26 +141,7 @@ int main(int argc, char *argv[])
 	glVertexAttribPointer(
 		texAttrib, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float))
 	);
-
-	// textures
-	GLuint tex;
-	glGenTextures(1, &tex);
-	glBindTexture(GL_TEXTURE_2D, tex);
-
-	int width, height;
-	unsigned char* image;
-	glActiveTexture(GL_TEXTURE0);
-	image = SOIL_load_image("avatar.png", &width, &height, 0, SOIL_LOAD_RGB);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
-	SOIL_free_image_data(image);
-	glUniform1i(glGetUniformLocation(shaderProgram, "avatar"), 0);
-	glGenerateMipmap(GL_TEXTURE_2D);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
+	createTextures();
 	mainLoop(shaderProgram);
 
 	glDeleteProgram(shaderProgram);
@@ -278,6 +260,27 @@ void createShaders() {
 	glBindFragDataLocation(shaderProgram, 0, "outColor");
 	glLinkProgram(shaderProgram);
 	glUseProgram(shaderProgram);
+}
+
+void createTextures() {
+	// textures
+	GLuint tex;
+	glGenTextures(1, &tex);
+	glBindTexture(GL_TEXTURE_2D, tex);
+
+	int width, height;
+	unsigned char* image;
+	glActiveTexture(GL_TEXTURE0);
+	image = SOIL_load_image("avatar.png", &width, &height, 0, SOIL_LOAD_RGB);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+	SOIL_free_image_data(image);
+	glUniform1i(glGetUniformLocation(shaderProgram, "avatar"), 0);
+	glGenerateMipmap(GL_TEXTURE_2D);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 }
 
 void mainLoop(GLuint shaderProgram) {
