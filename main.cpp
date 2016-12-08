@@ -283,16 +283,6 @@ bool handleEvents() {
 }
 
 void update(GLuint shaderProgram) {
-	// will have to be done per object
-	glm::mat4 trans;
-	trans = glm::rotate(
-		trans,
-		glm::radians((float) (3 * (SDL_GetTicks() / 50) % 360)),
-		glm::vec3(1.0f, 1.0f, 0.0f)
-	);
-	GLint uniTrans = glGetUniformLocation(shaderProgram, "trans");
-	glUniformMatrix4fv(uniTrans, 1, GL_FALSE, glm::value_ptr(trans));
-	glUniform1i(glGetUniformLocation(shaderProgram, "time"), SDL_GetTicks());
 }
 
 // Needs to provide player's information
@@ -323,9 +313,21 @@ void render() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glBindVertexArray(shipVertexArrayId);
+	glm::mat4 transShip;
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "trans"), 1, GL_FALSE, glm::value_ptr(transShip));
+	glUniform1i(glGetUniformLocation(shaderProgram, "time"), SDL_GetTicks());
 	glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
 
 	glBindVertexArray(asteroidVertexArrayId);
+	// will have to be done per object
+	glm::mat4 transAsteroid;
+	transAsteroid = glm::rotate(
+		transAsteroid,
+		glm::radians((float) (3 * (SDL_GetTicks() / 50) % 360)),
+		glm::vec3(0.0f, 1.0f, 0.0f)
+	);
+	GLint uniTrans = glGetUniformLocation(shaderProgram, "trans");
+	glUniformMatrix4fv(uniTrans, 1, GL_FALSE, glm::value_ptr(transAsteroid));
 	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, (void*) shipElementsSize);
 
 	SDL_GL_SwapWindow(window);
