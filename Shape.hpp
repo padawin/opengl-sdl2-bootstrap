@@ -9,9 +9,6 @@ class Shape {
 	GLuint *m_iElements;
 	unsigned long m_iNbVertices;
 	unsigned long m_iNbElements;
-	GLuint vertexArray,
-		vertexBuffer,
-		elementsBuffer;
 
 	public:
 	void setVertices(GLfloat *vertices, unsigned long nbVertices);
