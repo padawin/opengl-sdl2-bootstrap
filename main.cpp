@@ -343,7 +343,7 @@ void update(GLuint shaderProgram) {
 void setCamera(GLuint shaderProgram) {
 	glm::mat4 view = glm::lookAt(
 		// camera's position
-		glm::vec3(1.0f, 0.0f, 2.0f),
+		glm::vec3(1.0f, 0.0f, 5.0f),
 		// point where the camera is aiming at (eg player's position)
 		glm::vec3(0.0f, 0.0f, 0.0f),
 		// "up" vector of the camera, for its orientation, based on player's
