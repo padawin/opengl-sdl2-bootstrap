@@ -23,9 +23,11 @@ SDL_GLContext context;
 GLuint vertexBufferId;
 GLuint elementsBufferId;
 GLuint shipVertexArrayId;
+GLuint asteroidVertexArrayId;
 GLuint vertexShader;
 GLuint fragmentShader;
 GLuint shaderProgram;
+GLulong shipElementsSize;
 
 int initSDL(const char* title, const int x, const int y, const int w, const int h);
 void initGL();
@@ -95,30 +97,37 @@ int main(int argc, char *argv[])
 	};
 
 	unsigned long sizeObj1Vertices = sizeof(obj1Vertices);
+	unsigned long sizeObj2Vertices = sizeof(obj2Vertices);
 	unsigned long sizeObj1Elements = sizeof(obj1Elements);
+	unsigned long sizeObj2Elements = sizeof(obj2Elements);
 	unsigned long sizeFloat = sizeof(GLfloat);
 
 	glGenBuffers(1, &vertexBufferId);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferId);
 	glBufferData(
 		GL_ARRAY_BUFFER,
-		sizeObj1Vertices,
+		sizeObj1Vertices + sizeObj2Vertices,
 		0,
 		GL_STATIC_DRAW
 	);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeObj1Vertices, obj1Vertices);
+	glBufferSubData(GL_ARRAY_BUFFER, sizeObj1Vertices, sizeObj2Vertices, obj2Vertices);
 
 	glGenBuffers(1, &elementsBufferId);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementsBufferId);
 	glBufferData(
 		GL_ELEMENT_ARRAY_BUFFER,
-		sizeObj1Elements,
+		sizeObj1Elements + sizeObj2Elements,
 		0,
 		GL_STATIC_DRAW
 	);
 	glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, sizeObj1Elements, obj1Elements);
+	glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, sizeObj1Elements, sizeObj2Elements, obj2Elements);
+
+	shipElementsSize = sizeObj1Elements;
 
 	glGenVertexArrays(1, &shipVertexArrayId);
+	glGenVertexArrays(1, &asteroidVertexArrayId);
 
 	GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
 	GLint colAttrib = glGetAttribLocation(shaderProgram, "color");
@@ -134,6 +143,16 @@ int main(int argc, char *argv[])
 	glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 8 * sizeFloat, (void*)(6 * sizeFloat));
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementsBufferId);
 
+	glBindVertexArray(asteroidVertexArrayId);
+	glEnableVertexAttribArray(posAttrib);
+	glEnableVertexAttribArray(colAttrib);
+	glEnableVertexAttribArray(texAttrib);
+	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferId);
+	glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, 8 * sizeFloat, (void*) sizeObj1Vertices);
+	glVertexAttribPointer(colAttrib, 3, GL_FLOAT, GL_FALSE, 8 * sizeFloat, (void*)(sizeObj1Vertices + 3 * sizeFloat));
+	glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 8 * sizeFloat, (void*)(sizeObj1Vertices + 6 * sizeFloat));
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementsBufferId);
+
 	createTextures();
 	mainLoop(shaderProgram);
 
@@ -143,6 +162,7 @@ int main(int argc, char *argv[])
 	glDeleteBuffers(1, &vertexBufferId);
 	glDeleteBuffers(1, &elementsBufferId);
 	glDeleteVertexArrays(1, &shipVertexArrayId);
+	glDeleteVertexArrays(1, &asteroidVertexArrayId);
 	cleanSDL();
 	return 0;
 }
@@ -349,6 +369,8 @@ void render() {
 	glBindVertexArray(shipVertexArrayId);
 	glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
 
+	glBindVertexArray(asteroidVertexArrayId);
+	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, (void*) shipElementsSize);
 
 	SDL_GL_SwapWindow(window);
 }
