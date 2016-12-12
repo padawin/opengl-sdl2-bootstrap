@@ -16,8 +16,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "ShapeFactory.hpp"
-#include "Shape.hpp"
 #include "RenderableCollection.hpp"
 
 #define GLSL(src) "#version 150 core\n" #src
