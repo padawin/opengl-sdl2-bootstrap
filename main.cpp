@@ -18,6 +18,9 @@
 
 #include "RenderableCollection.hpp"
 
+#include "Player.hpp"
+#include "Asteroid.hpp"
+
 #define GLSL(src) "#version 150 core\n" #src
 
 SDL_Window* window;
@@ -26,6 +29,10 @@ RenderableCollection g_renderables;
 GLuint vertexShader;
 GLuint fragmentShader;
 GLuint shaderProgram;
+
+const int NB_ASTEROIDS = 10;
+Player g_player;
+Asteroid g_asteroids[NB_ASTEROIDS];
 
 int initSDL(const char* title, const int x, const int y, const int w, const int h);
 void initGL();
@@ -40,6 +47,20 @@ void setFieldOfView(GLuint shaderProgram);
 void render();
 void cleanSDL();
 
+void generateEntities() {
+	g_player.setPosition(Vector3D(0.0f, 0.0f, 0.0f));
+
+	time_t t;
+	srand((unsigned) time(&t));
+	for (int a = 0; a < NB_ASTEROIDS; ++a) {
+		g_asteroids[a].setPosition(Vector3D(
+			(rand() % 200) - 100,
+			(rand() % 200) - 100,
+			0
+		));
+	}
+}
+
 int main(int argc, char *argv[])
 {
 	initSDL("OpenGL", 0, 0, 800, 600);
@@ -47,6 +68,7 @@ int main(int argc, char *argv[])
 	createShaders();
 	createShapes();
 	createTextures();
+	generateEntities();
 	mainLoop(shaderProgram);
 
 	glDeleteProgram(shaderProgram);
