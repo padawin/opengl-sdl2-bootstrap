@@ -18,19 +18,16 @@
 
 #include "ShapeFactory.hpp"
 #include "Shape.hpp"
+#include "RenderableCollection.hpp"
 
 #define GLSL(src) "#version 150 core\n" #src
 
 SDL_Window* window;
 SDL_GLContext context;
-GLuint vertexBufferId;
-GLuint elementsBufferId;
-GLuint shipVertexArrayId;
-GLuint asteroidVertexArrayId;
+RenderableCollection g_renderables;
 GLuint vertexShader;
 GLuint fragmentShader;
 GLuint shaderProgram;
-GLulong shipElementsSize;
 
 int initSDL(const char* title, const int x, const int y, const int w, const int h);
 void initGL();
@@ -57,10 +54,7 @@ int main(int argc, char *argv[])
 	glDeleteProgram(shaderProgram);
 	glDeleteShader(fragmentShader);
 	glDeleteShader(vertexShader);
-	glDeleteBuffers(1, &vertexBufferId);
-	glDeleteBuffers(1, &elementsBufferId);
-	glDeleteVertexArrays(1, &shipVertexArrayId);
-	glDeleteVertexArrays(1, &asteroidVertexArrayId);
+	g_renderables.clean();
 	cleanSDL();
 	return 0;
 }
@@ -193,62 +187,10 @@ void createTextures() {
 }
 
 void createShapes() {
-	Shape ship, asteroid;
-	ShapeFactory::getShape(SHIP, &ship);
-	ShapeFactory::getShape(ASTEROID, &asteroid);
-
-	unsigned long sizeFloat = sizeof(GLfloat);
-
-	glGenBuffers(1, &vertexBufferId);
-	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferId);
-	glBufferData(
-		GL_ARRAY_BUFFER,
-		ship.getNbVertices() + asteroid.getNbVertices(),
-		0,
-		GL_STATIC_DRAW
-	);
-	glBufferSubData(GL_ARRAY_BUFFER, 0, ship.getNbVertices(), ship.getVertices());
-	glBufferSubData(GL_ARRAY_BUFFER, ship.getNbVertices(), asteroid.getNbVertices(), asteroid.getVertices());
-
-	glGenBuffers(1, &elementsBufferId);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementsBufferId);
-	glBufferData(
-		GL_ELEMENT_ARRAY_BUFFER,
-		ship.getNbElements() + asteroid.getNbElements(),
-		0,
-		GL_STATIC_DRAW
-	);
-	glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, ship.getNbElements(), ship.getElements());
-	glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, ship.getNbElements(), asteroid.getNbElements(), asteroid.getElements());
-
-	shipElementsSize = ship.getNbElements();
-
-	glGenVertexArrays(1, &shipVertexArrayId);
-	glGenVertexArrays(1, &asteroidVertexArrayId);
-
-	GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
-	GLint colAttrib = glGetAttribLocation(shaderProgram, "color");
-	GLint texAttrib = glGetAttribLocation(shaderProgram, "texture");
-
-	glBindVertexArray(shipVertexArrayId);
-	glEnableVertexAttribArray(posAttrib);
-	glEnableVertexAttribArray(colAttrib);
-	glEnableVertexAttribArray(texAttrib);
-	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferId);
-	glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, 8 * sizeFloat, 0);
-	glVertexAttribPointer(colAttrib, 3, GL_FLOAT, GL_FALSE, 8 * sizeFloat, (void*)(3 * sizeFloat));
-	glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 8 * sizeFloat, (void*)(6 * sizeFloat));
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementsBufferId);
-
-	glBindVertexArray(asteroidVertexArrayId);
-	glEnableVertexAttribArray(posAttrib);
-	glEnableVertexAttribArray(colAttrib);
-	glEnableVertexAttribArray(texAttrib);
-	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferId);
-	glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, 8 * sizeFloat, (void*) ship.getNbVertices());
-	glVertexAttribPointer(colAttrib, 3, GL_FLOAT, GL_FALSE, 8 * sizeFloat, (void*)(ship.getNbVertices() + 3 * sizeFloat));
-	glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 8 * sizeFloat, (void*)(ship.getNbVertices() + 6 * sizeFloat));
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementsBufferId);
+	g_renderables.addShape(SHIP);
+	g_renderables.addShape(ASTEROID);
+	g_renderables.generateBuffers();
+	g_renderables.generateVertexArrays(shaderProgram);
 }
 
 void mainLoop(GLuint shaderProgram) {
@@ -313,14 +255,13 @@ void render() {
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glBindVertexArray(shipVertexArrayId);
+	g_renderables.bindVertexArray(SHIP);
 	glm::mat4 transShip;
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "trans"), 1, GL_FALSE, glm::value_ptr(transShip));
 	glUniform1i(glGetUniformLocation(shaderProgram, "time"), SDL_GetTicks());
-	glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
+	g_renderables.render(SHIP);
 
-	glBindVertexArray(asteroidVertexArrayId);
-	// will have to be done per object
+	g_renderables.bindVertexArray(ASTEROID);
 	glm::mat4 transAsteroid;
 	transAsteroid = glm::rotate(
 		transAsteroid,
@@ -329,7 +270,7 @@ void render() {
 	);
 	GLint uniTrans = glGetUniformLocation(shaderProgram, "trans");
 	glUniformMatrix4fv(uniTrans, 1, GL_FALSE, glm::value_ptr(transAsteroid));
-	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, (void*) shipElementsSize);
+	g_renderables.render(ASTEROID);
 
 	SDL_GL_SwapWindow(window);
 }
