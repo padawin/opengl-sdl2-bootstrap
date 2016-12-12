@@ -1,7 +1,17 @@
 #include "ShapeFactory.hpp"
 #include <stdio.h>
 
-Shape ShapeFactory::getShipShape() {
+void ShapeFactory::getShape(ShapeType type, Shape *shape) {
+	switch (type) {
+		case SHIP:
+			_getShipShape(shape);
+			break;
+		case ASTEROID:
+			_getAsteroidShape(shape);
+	}
+}
+
+void ShapeFactory::_getShipShape(Shape *ship) {
 	GLfloat vertices[] = {
 		// Position    Color             Texcoords
 		// roof
@@ -20,13 +30,11 @@ Shape ShapeFactory::getShipShape() {
 		4, 3, 6
 	};
 
-	Shape ship;
-	ship.setVertices(vertices, sizeof(vertices));
-	ship.setElements(elements, sizeof(elements));
-	return ship;
+	ship->setVertices(vertices, sizeof(vertices));
+	ship->setElements(elements, sizeof(elements));
 }
 
-Shape ShapeFactory::getAsteroidShape() {
+void ShapeFactory::_getAsteroidShape(Shape *asteroid) {
 	GLfloat vertices[] = {
 		0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
 		1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
@@ -58,8 +66,6 @@ Shape ShapeFactory::getAsteroidShape() {
 		5, 2, 6
 	};
 
-	Shape asteroid;
-	asteroid.setVertices(vertices, sizeof(vertices));
-	asteroid.setElements(elements, sizeof(elements));
-	return asteroid;
+	asteroid->setVertices(vertices, sizeof(vertices));
+	asteroid->setElements(elements, sizeof(elements));
 }
