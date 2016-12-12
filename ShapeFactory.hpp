@@ -5,8 +5,8 @@
 
 class ShapeFactory {
 	public:
-	static Shape getShipShape();
-	static Shape getAsteroidShape();
+	static void getShipShape(Shape *ship);
+	static void getAsteroidShape(Shape *asteroid);
 };
 
 #endif
