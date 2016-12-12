@@ -194,8 +194,8 @@ void createTextures() {
 
 void createShapes() {
 	Shape ship, asteroid;
-	ShapeFactory::getShipShape(&ship);
-	ShapeFactory::getAsteroidShape(&asteroid);
+	ShapeFactory::getShape(SHIP, &ship);
+	ShapeFactory::getShape(ASTEROID, &asteroid);
 
 	unsigned long sizeFloat = sizeof(GLfloat);
 
