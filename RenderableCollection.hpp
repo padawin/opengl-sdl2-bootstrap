@@ -1,5 +1,5 @@
-#ifndef __RENDERABLES__
-#define __RENDERABLES__
+#ifndef __RENDERABLE_COLLECTION__
+#define __RENDERABLE_COLLECTION__
 
 #include <map>
 #include <vector>
