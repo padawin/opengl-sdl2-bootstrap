@@ -59,6 +59,7 @@ void generateEntities() {
 			((rand() % 4000) - 2000) / 1000.0f,
 			0
 		));
+		g_asteroids[a].setAngularSpeed(Vector3D(1.0f, 1.0f, 0.0f));
 	}
 }
 
