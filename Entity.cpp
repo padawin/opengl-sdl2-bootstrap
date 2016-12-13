@@ -55,3 +55,10 @@ Vector3D Entity::getAngularSpeed() {
 Vector3D Entity::getAngle() {
 	return m_VAngle;
 }
+
+void Entity::update() {
+	m_VSpeed += m_VAcceleration;
+	m_VPosition += m_VSpeed;
+	m_VAngularSpeed += m_VAngularAcceleration;
+	m_VAngle += m_VAngularSpeed;
+}

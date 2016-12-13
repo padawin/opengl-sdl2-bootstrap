@@ -25,6 +25,7 @@ class Entity {
 	Vector3D getAngularAcceleration();
 	Vector3D getAngularSpeed();
 	Vector3D getAngle();
+	virtual void update();
 	virtual ShapeType getShapeType() = 0;
 };
 
