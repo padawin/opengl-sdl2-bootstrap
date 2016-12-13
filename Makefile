@@ -2,7 +2,7 @@ NAME := progName
 TARGET := $(NAME)
 DISTFILES := $(TARGET) ClearSans-Medium.ttf resources
 OBJS := *.cpp
-OPTS := -g -O2 -Wall
+OPTS := -std=c++11 -g -O2 -Wall
 INC := -I/usr/include/SOIL
 LIB := -lSDL2 -lGLEW -lGL -lSOIL
 CC := $(CROSS_COMPILE)g++
