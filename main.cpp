@@ -59,8 +59,8 @@ void generateEntities() {
 	for (int a = 0; a < NB_ASTEROIDS; ++a) {
 		g_asteroids[a].setCenter(Vector3D(0.5f, 0.5f, 0.5f));
 		g_asteroids[a].setPosition(Vector3D(
-			((rand() % 4000) - 2000) / 1000.0f,
-			((rand() % 4000) - 2000) / 1000.0f,
+			((rand() % 15000) - 7500) / 1000.0f,
+			((rand() % 15000) - 7500) / 1000.0f,
 			0
 		));
 		g_asteroids[a].setAngularSpeed(Vector3D(1.0f, 1.0f, 0.0f));
@@ -260,7 +260,7 @@ void update(GLuint shaderProgram) {
 void setCamera(GLuint shaderProgram) {
 	glm::mat4 view = glm::lookAt(
 		// camera's position
-		glm::vec3(1.0f, 0.0f, 5.0f),
+		glm::vec3(1.0f, 0.0f, 15.0f),
 		// point where the camera is aiming at (eg player's position)
 		glm::vec3(0.0f, 0.0f, 0.0f),
 		// "up" vector of the camera, for its orientation, based on player's
@@ -273,7 +273,7 @@ void setCamera(GLuint shaderProgram) {
 
 // based on player's speed?
 void setFieldOfView(GLuint shaderProgram) {
-	glm::mat4 proj = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 1.0f, 10.0f);
+	glm::mat4 proj = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 1.0f, 120.0f);
 	GLint uniProj = glGetUniformLocation(shaderProgram, "proj");
 	glUniformMatrix4fv(uniProj, 1, GL_FALSE, glm::value_ptr(proj));
 }
