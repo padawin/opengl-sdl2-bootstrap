@@ -17,15 +17,24 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "RenderableCollection.hpp"
+#include "EntityCollection.hpp"
+
+#include "Player.hpp"
+#include "Asteroid.hpp"
 
 #define GLSL(src) "#version 150 core\n" #src
 
 SDL_Window* window;
 SDL_GLContext context;
 RenderableCollection g_renderables;
+EntityCollection g_entityCollection;
 GLuint vertexShader;
 GLuint fragmentShader;
 GLuint shaderProgram;
+
+const int NB_ASTEROIDS = 10;
+Player g_player;
+Asteroid g_asteroids[NB_ASTEROIDS];
 
 int initSDL(const char* title, const int x, const int y, const int w, const int h);
 void initGL();
@@ -40,6 +49,24 @@ void setFieldOfView(GLuint shaderProgram);
 void render();
 void cleanSDL();
 
+void generateEntities() {
+	g_player.setPosition(Vector3D(0.0f, 0.0f, 0.0f));
+	g_entityCollection.addEntity(&g_player);
+
+	time_t t;
+	srand((unsigned) time(&t));
+	for (int a = 0; a < NB_ASTEROIDS; ++a) {
+		g_asteroids[a].setCenter(Vector3D(0.5f, 0.5f, 0.5f));
+		g_asteroids[a].setPosition(Vector3D(
+			((rand() % 4000) - 2000) / 1000.0f,
+			((rand() % 4000) - 2000) / 1000.0f,
+			0
+		));
+		g_asteroids[a].setAngularSpeed(Vector3D(1.0f, 1.0f, 0.0f));
+		g_entityCollection.addEntity(&g_asteroids[a]);
+	}
+}
+
 int main(int argc, char *argv[])
 {
 	initSDL("OpenGL", 0, 0, 800, 600);
@@ -47,6 +74,7 @@ int main(int argc, char *argv[])
 	createShaders();
 	createShapes();
 	createTextures();
+	generateEntities();
 	mainLoop(shaderProgram);
 
 	glDeleteProgram(shaderProgram);
@@ -224,6 +252,7 @@ bool handleEvents() {
 }
 
 void update(GLuint shaderProgram) {
+	g_entityCollection.update();
 }
 
 // Needs to provide player's information
@@ -253,22 +282,8 @@ void render() {
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	g_renderables.bindVertexArray(SHIP);
-	glm::mat4 transShip;
-	glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "trans"), 1, GL_FALSE, glm::value_ptr(transShip));
 	glUniform1i(glGetUniformLocation(shaderProgram, "time"), SDL_GetTicks());
-	g_renderables.render(SHIP);
-
-	g_renderables.bindVertexArray(ASTEROID);
-	glm::mat4 transAsteroid;
-	transAsteroid = glm::rotate(
-		transAsteroid,
-		glm::radians((float) (3 * (SDL_GetTicks() / 50) % 360)),
-		glm::vec3(0.0f, 1.0f, 0.0f)
-	);
-	GLint uniTrans = glGetUniformLocation(shaderProgram, "trans");
-	glUniformMatrix4fv(uniTrans, 1, GL_FALSE, glm::value_ptr(transAsteroid));
-	g_renderables.render(ASTEROID);
+	g_entityCollection.render(shaderProgram, g_renderables);
 
 	SDL_GL_SwapWindow(window);
 }
