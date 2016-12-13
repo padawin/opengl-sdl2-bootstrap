@@ -55,8 +55,8 @@ void generateEntities() {
 	for (int a = 0; a < NB_ASTEROIDS; ++a) {
 		g_asteroids[a].setCenter(Vector3D(0.5f, 0.5f, 0.5f));
 		g_asteroids[a].setPosition(Vector3D(
-			(rand() % 200) - 100,
-			(rand() % 200) - 100,
+			((rand() % 4000) - 2000) / 1000.0f,
+			((rand() % 4000) - 2000) / 1000.0f,
 			0
 		));
 	}
