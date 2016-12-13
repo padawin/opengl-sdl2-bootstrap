@@ -1,6 +1,11 @@
 #ifndef __ENTITY__
 #define __ENTITY__
 
+// for math transformations
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 #include "Vector3D.hpp"
 #include "ShapeFactory.hpp"
 
@@ -26,6 +31,7 @@ class Entity {
 	Vector3D getAngularSpeed();
 	Vector3D getAngle();
 	virtual void update();
+	glm::mat4 getTransformationMatrix();
 	virtual ShapeType getShapeType() = 0;
 };
 

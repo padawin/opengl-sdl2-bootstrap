@@ -62,3 +62,36 @@ void Entity::update() {
 	m_VAngularSpeed += m_VAngularAcceleration;
 	m_VAngle += m_VAngularSpeed;
 }
+
+glm::mat4 Entity::getTransformationMatrix() {
+	glm::mat4 trans;
+	trans = glm::translate(
+		trans,
+		glm::vec3(m_VCenter.getX(), m_VCenter.getY(), m_VCenter.getZ())
+	);
+	trans = glm::translate(
+		trans,
+		glm::vec3(m_VPosition.getX(), m_VPosition.getY(), m_VPosition.getZ())
+	);
+	trans = glm::rotate(
+		trans,
+		glm::radians(m_VAngle.getX()),
+		glm::vec3(1.0f, 0.0f, 0.0f)
+	);
+	trans = glm::rotate(
+		trans,
+		glm::radians(m_VAngle.getY()),
+		glm::vec3(0.0f, 1.0f, 0.0f)
+	);
+	trans = glm::rotate(
+		trans,
+		glm::radians(m_VAngle.getZ()),
+		glm::vec3(0.0f, 0.0f, 1.0f)
+	);
+	trans = glm::translate(
+		trans,
+		glm::vec3(-m_VCenter.getX(), -m_VCenter.getY(), -m_VCenter.getZ())
+	);
+
+	return trans;
+}
