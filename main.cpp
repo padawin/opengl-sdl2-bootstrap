@@ -51,7 +51,6 @@ void cleanSDL();
 
 void generateEntities() {
 	g_player.setPosition(Vector3D(0.0f, 0.0f, 0.0f));
-	g_player.setAngle(Vector3D(90.f, 0.0f, 0.0f));
 	g_entityCollection.addEntity(&g_player);
 
 	time_t t;

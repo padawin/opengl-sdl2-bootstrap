@@ -13,10 +13,10 @@ void ShapeFactory::getShape(ShapeType type, Shape *shape) {
 
 void ShapeFactory::_getShipShape(Shape *ship) {
 	GLfloat vertices[] = {
-		1.006243f, 0.018257f, 1.000726f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
-		-0.993757f, 0.018257f, 1.000726f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
-		0.006244f, 0.069619f, -1.927195f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
-		0.000000f, 0.750000f, 0.500000f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
+		0.0f, 2.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
+		1.0f, -1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
+		-1.0f, -1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
+		0.0f, -0.5f, 0.75f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
 	};
 	GLuint elements[] = {
 		3, 2, 1,
