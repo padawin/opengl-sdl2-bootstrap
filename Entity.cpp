@@ -1,5 +1,9 @@
 #include "Entity.hpp"
 
+void Entity::setCenter(Vector3D center) {
+	m_VCenter = center;
+}
+
 void Entity::setAcceleration(Vector3D acceleration) {
 	m_VAcceleration = acceleration;
 }
@@ -22,6 +26,10 @@ void Entity::setAngularSpeed(Vector3D speed) {
 
 void Entity::setAngle(Vector3D angle) {
 	m_VAngle = angle;
+}
+
+Vector3D Entity::getCenter() {
+	return m_VCenter;
 }
 
 Vector3D Entity::getAcceleration() {
