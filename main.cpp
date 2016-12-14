@@ -51,6 +51,7 @@ void cleanSDL();
 
 void generateEntities() {
 	g_player.setPosition(Vector3D(0.0f, 0.0f, 0.0f));
+	g_player.setDirection(Vector3D(0.0f, 1.0f, 0.0f));
 	g_entityCollection.addEntity(&g_player);
 
 	time_t t;
@@ -244,6 +245,33 @@ bool handleEvents() {
 				break;
 
 			case SDL_KEYDOWN:
+				if (event.key.keysym.scancode == 82) {
+					g_player.thrust(true);
+				}
+				else if (event.key.keysym.scancode == 81) {
+					g_player.reverseThrust(true);
+				}
+				else if (event.key.keysym.scancode == 80) {
+					g_player.steerLeft(true);
+				}
+				else if (event.key.keysym.scancode == 79) {
+					g_player.steerRight(true);
+				}
+				break;
+
+			case SDL_KEYUP:
+				if (event.key.keysym.scancode == 82) {
+					g_player.thrust(false);
+				}
+				else if (event.key.keysym.scancode == 81) {
+					g_player.reverseThrust(false);
+				}
+				else if (event.key.keysym.scancode == 80) {
+					g_player.steerLeft(false);
+				}
+				else if (event.key.keysym.scancode == 79) {
+					g_player.steerRight(false);
+				}
 				break;
 		}
 	}
@@ -259,9 +287,9 @@ void update(GLuint shaderProgram) {
 void setCamera(GLuint shaderProgram) {
 	glm::mat4 view = glm::lookAt(
 		// camera's position
-		glm::vec3(1.0f, 0.0f, 15.0f),
+		glm::vec3(g_player.getPosition().getX(), g_player.getPosition().getY(), 15.0f),
 		// point where the camera is aiming at (eg player's position)
-		glm::vec3(0.0f, 0.0f, 0.0f),
+		glm::vec3(g_player.getPosition().getX(), g_player.getPosition().getY(), g_player.getPosition().getZ()),
 		// "up" vector of the camera, for its orientation, based on player's
 		// orientation
 		glm::vec3(0.0f, 1.0f, 0.0f)
