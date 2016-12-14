@@ -16,6 +16,11 @@ void Entity::setPosition(Vector3D position) {
 	m_VPosition = position;
 }
 
+void Entity::setDirection(Vector3D direction) {
+	m_VDirection = direction;
+	m_VDirection.normalize();
+}
+
 void Entity::setAngularAcceleration(Vector3D acceleration) {
 	m_VAngularAcceleration = acceleration;
 }
@@ -42,6 +47,10 @@ Vector3D Entity::getSpeed() {
 
 Vector3D Entity::getPosition() {
 	return m_VPosition;
+}
+
+Vector3D Entity::getDirection() {
+	return m_VDirection;
 }
 
 Vector3D Entity::getAngularAcceleration() {
