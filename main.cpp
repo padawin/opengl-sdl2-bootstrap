@@ -245,6 +245,21 @@ bool handleEvents() {
 				break;
 
 			case SDL_KEYDOWN:
+				if (event.key.keysym.scancode == 82) {
+					g_player.thrust(true);
+				}
+				else if (event.key.keysym.scancode == 81) {
+					g_player.reverseThrust(true);
+				}
+				break;
+
+			case SDL_KEYUP:
+				if (event.key.keysym.scancode == 82) {
+					g_player.thrust(false);
+				}
+				else if (event.key.keysym.scancode == 81) {
+					g_player.reverseThrust(false);
+				}
 				break;
 		}
 	}
