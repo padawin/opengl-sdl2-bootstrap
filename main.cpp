@@ -251,6 +251,12 @@ bool handleEvents() {
 				else if (event.key.keysym.scancode == 81) {
 					g_player.reverseThrust(true);
 				}
+				else if (event.key.keysym.scancode == 80) {
+					g_player.steerLeft(true);
+				}
+				else if (event.key.keysym.scancode == 79) {
+					g_player.steerRight(true);
+				}
 				break;
 
 			case SDL_KEYUP:
@@ -259,6 +265,12 @@ bool handleEvents() {
 				}
 				else if (event.key.keysym.scancode == 81) {
 					g_player.reverseThrust(false);
+				}
+				else if (event.key.keysym.scancode == 80) {
+					g_player.steerLeft(false);
+				}
+				else if (event.key.keysym.scancode == 79) {
+					g_player.steerRight(false);
 				}
 				break;
 		}
