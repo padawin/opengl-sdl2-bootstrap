@@ -5,6 +5,7 @@
 
 class Asteroid : public Entity {
 	public:
+	Asteroid();
 	ShapeType getShapeType();
 };
 
