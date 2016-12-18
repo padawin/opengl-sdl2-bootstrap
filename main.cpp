@@ -20,7 +20,7 @@
 #include "EntityCollection.hpp"
 
 #include "Player.hpp"
-#include "Asteroid.hpp"
+#include "AsteroidGenerator.hpp"
 
 #define GLSL(src) "#version 150 core\n" #src
 #define SCREEN_WIDTH 800
@@ -36,7 +36,7 @@ GLuint shaderProgram;
 
 const int NB_ASTEROIDS = 10;
 Player g_player;
-Asteroid g_asteroids[NB_ASTEROIDS];
+AsteroidGenerator g_asteroidGenerator;
 
 int initSDL(const char* title, const int x, const int y, const int w, const int h);
 void initGL();
@@ -59,13 +59,13 @@ void generateEntities() {
 	time_t t;
 	srand((unsigned) time(&t));
 	for (int a = 0; a < NB_ASTEROIDS; ++a) {
-		g_asteroids[a].setPosition(Vector3D(
-			((rand() % 15000) - 7500) / 1000.0f,
-			((rand() % 15000) - 7500) / 1000.0f,
-			0
-		));
-		g_asteroids[a].setAngularSpeed(Vector3D(1.0f, 1.0f, 0.0f));
-		g_entityCollection.addEntity(&g_asteroids[a]);
+		g_entityCollection.addEntity(
+			g_asteroidGenerator.addAsteroid(Vector3D(
+				((rand() % 15000) - 7500) / 1000.0f,
+				((rand() % 15000) - 7500) / 1000.0f,
+				0.0f
+			))
+		);
 	}
 }
 
@@ -82,6 +82,7 @@ int main(int argc, char *argv[])
 	glDeleteProgram(shaderProgram);
 	glDeleteShader(fragmentShader);
 	glDeleteShader(vertexShader);
+	g_asteroidGenerator.clean();
 	g_renderables.clean();
 	cleanSDL();
 	return 0;
