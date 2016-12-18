@@ -34,7 +34,7 @@ GLuint vertexShader;
 GLuint fragmentShader;
 GLuint shaderProgram;
 
-const int NB_ASTEROIDS = 10;
+const int NB_MAX_INIT_ASTEROIDS = 20;
 Player g_player;
 AsteroidGenerator g_asteroidGenerator;
 
@@ -58,7 +58,8 @@ void generateEntities() {
 
 	time_t t;
 	srand((unsigned) time(&t));
-	for (int a = 0; a < NB_ASTEROIDS; ++a) {
+	int nbAsteroids = rand() % NB_MAX_INIT_ASTEROIDS;
+	for (int a = 0; a < nbAsteroids; ++a) {
 		g_entityCollection.addEntity(
 			g_asteroidGenerator.addAsteroid(Vector3D(
 				((rand() % 15000) - 7500) / 1000.0f,
