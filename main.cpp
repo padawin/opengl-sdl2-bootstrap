@@ -23,6 +23,8 @@
 #include "Asteroid.hpp"
 
 #define GLSL(src) "#version 150 core\n" #src
+#define SCREEN_WIDTH 800
+#define SCREEN_HEIGHT 600
 
 SDL_Window* window;
 SDL_GLContext context;
@@ -69,7 +71,7 @@ void generateEntities() {
 
 int main(int argc, char *argv[])
 {
-	initSDL("OpenGL", 0, 0, 800, 600);
+	initSDL("OpenGL", 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	initGL();
 	createShaders();
 	createShapes();
