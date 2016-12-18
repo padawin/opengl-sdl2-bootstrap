@@ -7,8 +7,12 @@ Asteroid* AsteroidGenerator::addAsteroid(Vector3D position) {
 
 	Asteroid *asteroid = new Asteroid();
 	asteroid->setPosition(position);
+	// angle is between -2.0f and 2.0f degrees
+	float angularSpeedX = rand() % 4 - 2.0f,
+		  angularSpeedY = rand() % 4 - 2.0f,
+		  angularSpeedZ = rand() % 4 - 2.0f;
 	asteroid->setAngularSpeed(
-		Vector3D(1.0f, 1.0f, 0.0f)
+		Vector3D(angularSpeedX, angularSpeedY, angularSpeedZ)
 	);
 	m_asteroids[m_iNbAsteroids] = asteroid;
 	++m_iNbAsteroids;
