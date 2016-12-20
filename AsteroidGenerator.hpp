@@ -11,7 +11,8 @@ class AsteroidGenerator {
 	std::vector<Asteroid*> m_vAsteroids;
 
 	public:
-	Asteroid* addAsteroid(Vector3D position);
+	void addAsteroid(Vector3D position);
+	std::vector<Asteroid*> getAsteroids();
 	void clean();
 };
 

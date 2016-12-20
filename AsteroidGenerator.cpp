@@ -1,8 +1,8 @@
 #include "AsteroidGenerator.hpp"
 
-Asteroid* AsteroidGenerator::addAsteroid(Vector3D position) {
+void AsteroidGenerator::addAsteroid(Vector3D position) {
 	if (m_vAsteroids.size() == NB_MAX_ASTEROIDS) {
-		return NULL;
+		return;
 	}
 
 	Asteroid *asteroid = new Asteroid();
@@ -15,12 +15,14 @@ Asteroid* AsteroidGenerator::addAsteroid(Vector3D position) {
 		Vector3D(angularSpeedX, angularSpeedY, angularSpeedZ)
 	);
 	m_vAsteroids.push_back(asteroid);
-
-	return asteroid;
 }
 
 void AsteroidGenerator::clean() {
 	for (std::vector<Entity*>::size_type i = 0; i < m_vAsteroids.size(); ++i) {
 		free(m_vAsteroids[i]);
 	}
+}
+
+std::vector<Asteroid*> AsteroidGenerator::getAsteroids() {
+	return m_vAsteroids;
 }
