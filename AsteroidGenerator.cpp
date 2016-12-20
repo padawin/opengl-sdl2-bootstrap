@@ -23,9 +23,17 @@ void AsteroidGenerator::addAsteroid(Vector3D position) {
 	float angularSpeedX = rand() % 4 - 2.0f,
 		  angularSpeedY = rand() % 4 - 2.0f,
 		  angularSpeedZ = rand() % 4 - 2.0f;
+
+	float speed = (rand() % 1000) / 10000.0f;
+	float angle = (rand() % 360) * M_PI / 180;
 	asteroid->setAngularSpeed(
 		Vector3D(angularSpeedX, angularSpeedY, angularSpeedZ)
 	);
+	asteroid->setSpeed(Vector3D(
+		speed * cos(angle),
+		speed * sin(angle),
+		0.0f
+	));
 	m_vAsteroids.push_back(asteroid);
 }
 
