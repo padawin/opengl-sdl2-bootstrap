@@ -9,9 +9,11 @@
 class AsteroidGenerator {
 	private:
 	std::vector<Asteroid*> m_vAsteroids;
+	void _removeAsteroid(unsigned int asteroidIndex);
 
 	public:
 	void addAsteroid(Vector3D position);
+	void update(Vector3D thresholdPosition, float threshold);
 	std::vector<Asteroid*> getAsteroids();
 	void clean();
 };
