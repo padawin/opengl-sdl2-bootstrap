@@ -25,7 +25,7 @@
 #define GLSL(src) "#version 150 core\n" #src
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
-#define MAX_DISTANCE_FROM_PLAYER 10
+#define MAX_DISTANCE_FROM_PLAYER 13
 
 SDL_Window* window;
 SDL_GLContext context;
