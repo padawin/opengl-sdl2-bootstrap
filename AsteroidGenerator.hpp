@@ -4,7 +4,7 @@
 #include <vector>
 #include "Asteroid.hpp"
 
-#define NB_MAX_ASTEROIDS 200
+#define NB_MAX_ASTEROIDS 20
 
 class AsteroidGenerator {
 	private:
