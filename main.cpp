@@ -25,6 +25,9 @@
 #define GLSL(src) "#version 150 core\n" #src
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
+#define MIN_DISTANCE_ASTEROID_GENERATE 10
+#define MAX_DISTANCE_ASTEROID_GENERATE 13
+#define MAX_DISTANCE_FROM_PLAYER 13
 
 SDL_Window* window;
 SDL_GLContext context;
@@ -54,19 +57,23 @@ void cleanSDL();
 void generateEntities() {
 	g_player.setPosition(Vector3D(0.0f, 0.0f, 0.0f));
 	g_player.setDirection(Vector3D(0.0f, 1.0f, 0.0f));
-	g_entityCollection.addEntity(&g_player);
+
+	g_asteroidGenerator.setDistanceRecycle(MAX_DISTANCE_FROM_PLAYER);
+	g_asteroidGenerator.setRangeDistanceAppear(
+		MIN_DISTANCE_ASTEROID_GENERATE,
+		MAX_DISTANCE_ASTEROID_GENERATE
+	);
 
 	time_t t;
 	srand((unsigned) time(&t));
 	int nbAsteroids = rand() % NB_MAX_INIT_ASTEROIDS;
 	for (int a = 0; a < nbAsteroids; ++a) {
-		g_entityCollection.addEntity(
-			g_asteroidGenerator.addAsteroid(Vector3D(
-				((rand() % 15000) - 7500) / 1000.0f,
-				((rand() % 15000) - 7500) / 1000.0f,
-				0.0f
-			))
-		);
+		// asteroids are initialised 150px around the screen
+		g_asteroidGenerator.addAsteroid(Vector3D(
+			((rand() % 15000) - 7500) / 1000.0f,
+			((rand() % 15000) - 7500) / 1000.0f,
+			0.0f
+		));
 	}
 }
 
@@ -283,6 +290,12 @@ bool handleEvents() {
 }
 
 void update(GLuint shaderProgram) {
+	g_asteroidGenerator.update(g_player.getPosition());
+	g_entityCollection.flush();
+	g_entityCollection.addEntity(&g_player);
+	for (auto& asteroid : g_asteroidGenerator.getAsteroids()) {
+		g_entityCollection.addEntity(asteroid);
+	}
 	g_entityCollection.update();
 }
 

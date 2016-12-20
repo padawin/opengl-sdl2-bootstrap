@@ -9,6 +9,10 @@ void EntityCollection::addEntity(Entity *entity) {
 	m_mEntities[type].push_back(entity);
 }
 
+void EntityCollection::flush() {
+	m_mEntities.clear();
+}
+
 void EntityCollection::update() {
 	for (auto& it : m_mEntities) {
 		for (auto &itEntity : it.second) {

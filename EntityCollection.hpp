@@ -13,6 +13,7 @@ class EntityCollection {
 
 	public:
 	void addEntity(Entity *entity);
+	void flush();
 	void update();
 	void render(GLuint shaderProgram, RenderableCollection renderables);
 };
