@@ -25,6 +25,8 @@
 #define GLSL(src) "#version 150 core\n" #src
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
+#define MIN_DISTANCE_ASTEROID_GENERATE 10
+#define MAX_DISTANCE_ASTEROID_GENERATE 13
 #define MAX_DISTANCE_FROM_PLAYER 13
 
 SDL_Window* window;
@@ -57,6 +59,10 @@ void generateEntities() {
 	g_player.setDirection(Vector3D(0.0f, 1.0f, 0.0f));
 
 	g_asteroidGenerator.setDistanceRecycle(MAX_DISTANCE_FROM_PLAYER);
+	g_asteroidGenerator.setRangeDistanceAppear(
+		MIN_DISTANCE_ASTEROID_GENERATE,
+		MAX_DISTANCE_ASTEROID_GENERATE
+	);
 
 	time_t t;
 	srand((unsigned) time(&t));
