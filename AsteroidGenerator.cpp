@@ -1,5 +1,9 @@
 #include "AsteroidGenerator.hpp"
 
+void AsteroidGenerator::setDistanceRecycle(float distance) {
+	m_fDistanceRecycle = distance;
+}
+
 void AsteroidGenerator::addAsteroid(Vector3D position) {
 	if (m_vAsteroids.size() == NB_MAX_ASTEROIDS) {
 		return;
@@ -17,10 +21,10 @@ void AsteroidGenerator::addAsteroid(Vector3D position) {
 	m_vAsteroids.push_back(asteroid);
 }
 
-void AsteroidGenerator::update(Vector3D thresholdPosition, float threshold) {
+void AsteroidGenerator::update(Vector3D thresholdPosition) {
 	for (std::vector<Entity*>::size_type i = 0; i < m_vAsteroids.size(); ++i) {
 		Vector3D distance = m_vAsteroids.at(i)->getPosition() - thresholdPosition;
-		if (distance.getLength() > threshold) {
+		if (distance.getLength() > m_fDistanceRecycle) {
 			_removeAsteroid(i);
 		}
 	}

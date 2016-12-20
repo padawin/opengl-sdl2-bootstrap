@@ -56,6 +56,8 @@ void generateEntities() {
 	g_player.setPosition(Vector3D(0.0f, 0.0f, 0.0f));
 	g_player.setDirection(Vector3D(0.0f, 1.0f, 0.0f));
 
+	g_asteroidGenerator.setDistanceRecycle(MAX_DISTANCE_FROM_PLAYER);
+
 	time_t t;
 	srand((unsigned) time(&t));
 	int nbAsteroids = rand() % NB_MAX_INIT_ASTEROIDS;
@@ -282,7 +284,7 @@ bool handleEvents() {
 }
 
 void update(GLuint shaderProgram) {
-	g_asteroidGenerator.update(g_player.getPosition(), MAX_DISTANCE_FROM_PLAYER);
+	g_asteroidGenerator.update(g_player.getPosition());
 	g_entityCollection.flush();
 	g_entityCollection.addEntity(&g_player);
 	for (auto& asteroid : g_asteroidGenerator.getAsteroids()) {
