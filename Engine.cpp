@@ -188,9 +188,6 @@ void Engine::_generateEntities() {
 		MIN_DISTANCE_ASTEROID_GENERATE,
 		MAX_DISTANCE_ASTEROID_GENERATE
 	);
-
-	time_t t;
-	srand((unsigned) time(&t));
 	int nbAsteroids = rand() % NB_MAX_INIT_ASTEROIDS;
 	for (int a = 0; a < nbAsteroids; ++a) {
 		// asteroids are initialised 150px around the screen

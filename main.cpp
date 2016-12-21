@@ -5,6 +5,8 @@
 
 int main(int argc, char *argv[])
 {
+	time_t t;
+	srand((unsigned) time(&t));
 	Engine engine;
 
 	engine.init(SCREEN_WIDTH, SCREEN_HEIGHT);
