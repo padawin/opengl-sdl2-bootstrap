@@ -1,14 +1,52 @@
-NAME := progName
-TARGET := $(NAME)
-DISTFILES := $(TARGET) ClearSans-Medium.ttf resources
-OBJS := *.cpp
-OPTS := -std=c++11 -g -O2 -Wall
-LIB := -lSDL2 -lGLEW -lGL -lSOIL
-CC := $(CROSS_COMPILE)g++
+BINDIR := bin
+SRCDIR := .
+BUILDDIR := build
 
-SDL2CONF = $(shell which sdl2-config)
-CFLAGS += $(shell $(SDL2CONF) --cflags)
-LDFLAGS += $(shell $(SDL2CONF) --libs)
+PROG   := progName
+CC     := g++
+INCL   :=
+CFLAGS := -g -O2 -Wall -Wmissing-declarations -Weffc++ \
+		-pedantic -pedantic-errors -Wextra -Wcast-align \
+		-Wcast-qual -Wconversion \
+		-Wdisabled-optimization \
+		-Werror -Wfloat-equal -Wformat=2 \
+		-Wformat-nonliteral -Wformat-security \
+		-Wformat-y2k \
+		-Wimport -Winit-self -Winline \
+		-Winvalid-pch \
+		-Wlong-long \
+		-Wmissing-field-initializers -Wmissing-format-attribute \
+		-Wmissing-include-dirs -Wmissing-noreturn \
+		-Wpacked -Wpointer-arith \
+		-Wredundant-decls \
+		-Wshadow -Wstack-protector \
+		-Wstrict-aliasing=2 -Wswitch-default \
+		-Wswitch-enum \
+		-Wunreachable-code -Wunused \
+		-Wunused-parameter \
+		-Wvariadic-macros \
+		-Wwrite-strings
+LDFLAGS:= -I./$(SRCDIR)
+CCDYNAMICFLAGS := ${CFLAGS} ${LDFLAGS} -Ivendor/ -lSDL2 -lGLEW -lGL -lSOIL
 
-$(TARGET): $(OBJS)
-	    $(CC) $(OPTS) $(CFLAGS) $^ -o $(NAME) $(LIB)
+SRC := $(shell find $(SRCDIR)/ -type f -name '*.cpp')
+OBJ := $(patsubst %.cpp,$(BUILDDIR)/%.o,$(SRC))
+DEP := $(patsubst %.o,%.deps,$(OBJ))
+
+all: $(PROG)
+
+-include $(DEP)
+
+%.deps: %.cpp
+	$(CC) -MM $< >$@
+
+build/%.o: %.cpp
+	@mkdir -p $(dir $@)
+	$(CC) -g -c -MMD $(patsubst $(BUILDDIR)/%.o,%.cpp,$@) -o $@
+
+clean:
+	rm -rf $(BINDIR) $(BUILDDIR)
+
+$(PROG): $(OBJ)
+	mkdir -p $(BINDIR)
+	$(CC) -o $(BINDIR)/$@ $^ $(CCDYNAMICFLAGS)
