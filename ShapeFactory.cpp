@@ -11,6 +11,9 @@ void ShapeFactory::getShape(ShapeType type, Shape *shape) {
 	}
 }
 
+// The vertices have the following format:
+// x, y, z, r, g, b, texture X, texture Y, normal X, normal Y
+
 void ShapeFactory::_getShipShape(Shape *ship) {
 	GLfloat vertices[] = {
 		0.0f, 2.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,

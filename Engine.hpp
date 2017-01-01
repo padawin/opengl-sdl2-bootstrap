@@ -6,6 +6,7 @@
 #include "RenderableCollection.hpp"
 #include "EntityCollection.hpp"
 #include "Player.hpp"
+#include "Light.hpp"
 #include "AsteroidGenerator.hpp"
 
 #define GLSL(src) "#version 150 core\n" #src
@@ -24,6 +25,7 @@ class Engine {
 	GLuint m_fragmentShader;
 	GLuint m_shaderProgram;
 
+	Light m_light;
 	Player m_player;
 	AsteroidGenerator m_asteroidGenerator;
 	EntityCollection m_entityCollection;
